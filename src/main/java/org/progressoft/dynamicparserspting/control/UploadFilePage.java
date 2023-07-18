@@ -4,12 +4,13 @@ package org.progressoft.dynamicparserspting.control;
 import com.progressoft.interns.advanced.parser.CSVParser;
 import com.progressoft.interns.advanced.parser.JSONParser;
 import com.progressoft.interns.advanced.parser.Parser;
-import jakarta.servlet.RequestDispatcher;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.Part;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 import org.progressoft.dynamicparserspting.connection.DatabaseConnection;
+import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,15 +28,14 @@ import java.util.List;
 import static java.rmi.server.LogStream.log;
 
 
-@RequestMapping("/data")
-@RestController
+@Controller
 public class UploadFilePage{
     private static final long serialVersionUID = 1L;
 
     private static final String UPLOAD_DIR = "uploads";
 
-    @PostMapping
-    protected void post(@RequestAttribute HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    @PostMapping("/data")
+    protected void post(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String buttonValue = req.getParameter("button1");
         if (buttonValue.equals("Upload"))
             parseFile(req, resp);
@@ -111,8 +111,8 @@ public class UploadFilePage{
         return result;
     }
 
-    @GetMapping
-    protected void get(@RequestAttribute HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    @GetMapping("/data")
+    protected void get(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         int index = 1;
         if (req.getParameter("pageNumber") != null)
             index = Integer.parseInt(req.getParameter("pageNumber"));
@@ -124,7 +124,7 @@ public class UploadFilePage{
         List<HashMap<String, String>> currentData = new ArrayList<>(sublist);
         System.out.println(currentData);
         req.getSession().setAttribute("currentMainData", currentData);
-        req.getRequestDispatcher("dataPage.jsp").forward(req, resp);
+        req.getRequestDispatcher("/WEB-INF/views/dataPage.jsp").forward(req, resp);
     }
 
     private String getFileName(Part part) {

@@ -3,9 +3,9 @@ package org.progressoft.dynamicparserspting.control;
 import com.progressoft.interns.advanced.exception.UtilityException;
 import com.progressoft.interns.advanced.utility.ParsedDataUtility;
 import com.progressoft.interns.advanced.utility.ParsedDataUtilityImpl;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.progressoft.dynamicparserspting.connection.DatabaseConnection;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
@@ -34,21 +34,21 @@ public class DataUtility {
                 String summation = getSumOf(result, columnName);
                 request.setAttribute("value", summation);
                 sendSummationToDatabase(summation, request.getSession().getAttribute("fileName").toString());
-                request.getRequestDispatcher("result.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/result.jsp").forward(request, response);
             }
             case "Average" -> {
                 String average = getAverageOf(result, columnName);
                 sendAverageToDatabase(average, request.getSession().getAttribute("fileName").toString());
                 request.setAttribute("value", getAverageOf(result, columnName));
-                request.getRequestDispatcher("result.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/result.jsp").forward(request, response);
             }
             case "Column" -> {
                 request.getSession().setAttribute("columnName", columnName);
                 request.getSession().setAttribute("dataColumn", new ParsedDataUtilityImpl().getColumnData(result, columnName));
                 doGet(request, response);
             }
-            case "BackFromDataPage" -> request.getRequestDispatcher("uploadPage.jsp").forward(request, response);
-            case "BackFromResultPage" -> request.getRequestDispatcher("dataPage.jsp").forward(request, response);
+            case "BackFromDataPage" -> request.getRequestDispatcher("/WEB-INF/views/uploadPage.jsp").forward(request, response);
+            case "BackFromResultPage" -> request.getRequestDispatcher("/WEB-INF/views/dataPage.jsp").forward(request, response);
         }
     }
 
@@ -64,7 +64,7 @@ public class DataUtility {
         List<String> currentData = new ArrayList<>(sublist);
         System.out.println(currentData);
         request.setAttribute("currentData", currentData);
-        request.getRequestDispatcher("columnData.jsp").forward(request, response);
+        request.getRequestDispatcher("/WEB-INF/views/columnData.jsp").forward(request, response);
     }
 
     private String getAverageOf(ArrayList<HashMap<String, String>> parsedData, String columnName) {

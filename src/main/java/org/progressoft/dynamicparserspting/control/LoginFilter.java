@@ -1,13 +1,16 @@
 package org.progressoft.dynamicparserspting.control;
 
 
-import jakarta.servlet.*;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
+import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+
+@Component
+@Order(1)
 public class LoginFilter implements Filter {
     FilterConfig config;
 
@@ -24,7 +27,7 @@ public class LoginFilter implements Filter {
         String username = (String) session.getAttribute("username");
         System.out.println(path);
         if(username == null && !path.equals("/login")){
-            servletRequest.getRequestDispatcher("index.jsp").forward(servletRequest, servletResponse);
+            servletRequest.getRequestDispatcher("/WEB-INF/views/index.jsp").forward(servletRequest, servletResponse);
         }
         else {
             filterChain.doFilter(servletRequest, servletResponse);

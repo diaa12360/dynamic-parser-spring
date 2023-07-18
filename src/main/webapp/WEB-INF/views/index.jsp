@@ -1,10 +1,6 @@
-<%@ page language="java" contentType="text/html; charset=US-ASCII" pageEncoding="US-ASCII"%>
 <!DOCTYPE html>
-<%@ page isErrorPage = "true" %>
 <html>
 <head>
-  <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-
 <title> CSS Login Screen Tutorial </title>
 <style>
 @import url(https://fonts.googleapis.com/css?family=Roboto:300);
@@ -56,8 +52,6 @@ margin-bottom: 26px;
   padding: 15px;
   color: #FFFFFF;
   font-size: 14px;
-  -webkit-transition: all 0.3 ease;
-  transition: all 0.3 ease;
   cursor: pointer;
 }
 .form .message {
@@ -94,12 +88,12 @@ body {
             <p>Please enter your credentials to login.</p>
           </div>
         </div>
-        <form class="login-form" action="login" method="GET">
+        <form class="login-form" action="/login" method="GET">
           <input type="text" placeholder="username" name="username"/>
           <input type="password" placeholder="password" name="password"/>
           <button name="btn" value="login">login</button>
           <button name="btn" value="create">Create Account</button>
-          <p class="message">Not registered? <a href="./createUser">Create an account</a></p>
+          <p class="message">Not registered? <a href="createUser.jsp">Create an account</a></p>
         </form>
       </div>
     </div>

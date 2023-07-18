@@ -1,9 +1,6 @@
-<%@ page language="java" contentType="text/html; charset=US-ASCII" pageEncoding="US-ASCII"%>
 <!DOCTYPE html>
-<%@ page isErrorPage = "true" %>
 <html>
 <head>
-  <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
     <title> CSS Login Screen Tutorial </title>
 <style>
 @import url(https://fonts.googleapis.com/css?family=Roboto:300);
@@ -55,8 +52,6 @@ margin-bottom: 26px;
   padding: 15px;
   color: #FFFFFF;
   font-size: 14px;
-  -webkit-transition: all 0.3 ease;
-  transition: all 0.3 ease;
   cursor: pointer;
 }
 .form .message {

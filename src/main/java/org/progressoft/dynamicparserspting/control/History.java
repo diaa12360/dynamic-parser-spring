@@ -1,8 +1,8 @@
 package org.progressoft.dynamicparserspting.control;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.progressoft.dynamicparserspting.connection.DatabaseConnection;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestAttribute;
@@ -38,7 +38,7 @@ public class History {
             }
             System.out.println(tableData);
             req.setAttribute("tableData", tableData);
-            req.getRequestDispatcher("historyPage.jsp").forward(req, resp);
+            req.getRequestDispatcher("/WEB-INF/views/historyPage.jsp").forward(req, resp);
 
         } catch (SQLException e) {
             throw new RuntimeException(e);

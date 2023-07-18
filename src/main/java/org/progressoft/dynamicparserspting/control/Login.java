@@ -1,10 +1,11 @@
 package org.progressoft.dynamicparserspting.control;
 
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.progressoft.dynamicparserspting.connection.DatabaseConnection;
 import org.progressoft.dynamicparserspting.connection.Encryption;
+import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -15,15 +16,15 @@ import java.sql.SQLException;
 
 @RestController
 public class Login {
-    @RequestMapping(value="/login", method = RequestMethod.GET)
+    @RequestMapping(value="/test", method = RequestMethod.GET)
     protected String getMap() {
-        return "index";
+        return "index.jsp";
     }
 
-    @GetMapping
+    @RequestMapping(value="/login", method = RequestMethod.GET)
     protected void get(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (request.getParameter("btn").equals("create")) {
-            request.getRequestDispatcher("createUser.jsp").forward(request, response);
+        if ("create".equals(request.getParameter("btn"))) {
+            request.getRequestDispatcher("/WEB-INF/views/createUser.jsp").forward(request, response);
         } else {
             String username = request.getParameter("username");
             String password = request.getParameter("password");
@@ -38,10 +39,10 @@ public class Login {
                         Encryption.encrypt(password) == (set.getInt(2))) {
                     request.getSession().setAttribute("username", username);
                     request.getSession().setAttribute("password", password);
-                    request.getRequestDispatcher("uploadPage.jsp").forward(request, response);
+                    request.getRequestDispatcher("/WEB-INF/views/uploadPage.jsp").forward(request, response);
                 } else {
                     request.setAttribute("message", "message");
-                    request.getRequestDispatcher("index.jsp").forward(request, response);
+                    request.getRequestDispatcher("/WEB-INF/views/index.jsp").forward(request, response);
                 }
                 connection.close();
             } catch (SQLException e) {
@@ -50,6 +51,7 @@ public class Login {
                 throw new RuntimeException(e);
             }
         }
+
 
     }
 
@@ -63,12 +65,12 @@ public class Login {
         String password2 = req.getParameter("password2");
         if (username1 == null || username1.equals("")) {
             req.setAttribute("message", "message");
-            req.getRequestDispatcher("createUser.jsp").forward(req, resp);
+            req.getRequestDispatcher("/WEB-INF/views/createUser.jsp").forward(req, resp);
             return;
         }
         if (!password1.equals(password2)) {
             req.setAttribute("message", "message");
-            req.getRequestDispatcher("createUser.jsp").forward(req, resp);
+            req.getRequestDispatcher("/WEB-INF/views/createUser.jsp").forward(req, resp);
             return;
         }
         try {
@@ -78,7 +80,7 @@ public class Login {
             statement.setString(1, username1);
             statement.setInt(2, Encryption.encrypt(password1));
             statement.executeUpdate();
-            req.getRequestDispatcher("index.jsp").forward(req, resp);
+            req.getRequestDispatcher("/WEB-INF/views/index.jsp").forward(req, resp);
             connection.close();
         } catch (SQLException e) {
             throw new RuntimeException(e);
