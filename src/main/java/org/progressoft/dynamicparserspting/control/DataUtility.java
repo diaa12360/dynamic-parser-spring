@@ -3,13 +3,15 @@ package org.progressoft.dynamicparserspting.control;
 import com.progressoft.interns.advanced.exception.UtilityException;
 import com.progressoft.interns.advanced.utility.ParsedDataUtility;
 import com.progressoft.interns.advanced.utility.ParsedDataUtilityImpl;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.progressoft.dynamicparserspting.connection.DatabaseConnection;
 import org.progressoft.dynamicparserspting.connection.History;
 import org.progressoft.dynamicparserspting.connection.HistoryRepo;
-import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -25,51 +27,54 @@ import java.util.List;
 @RequestMapping("/utility")
 public class DataUtility {
     private final int PAGE_SIZE = 15;
+    @Autowired
+    HistoryRepo history;
+
     @PostMapping
-    protected void post(HttpServletRequest request, HttpServletResponse response, HistoryRepo history) throws IOException, ServletException {
+    protected void post(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         ArrayList<HashMap<String, String>> result = (ArrayList<HashMap<String, String>>) request.getSession().getAttribute("result");
         response.setContentType("text/html");
         String buttonValue = request.getParameter("button");
         String columnName = request.getParameter("column");
+        String fileName = request.getSession().getAttribute("fileName").toString();
         switch (buttonValue) {
             case "Summation" -> {
                 String summation = getSumOf(result, columnName);
-                request.setAttribute("value", summation);
-                try {
-                    history.save(new History(
+                History data;
+                if (history.existsById(fileName)) {
+                    data = new History(
                             request.getSession().getAttribute("fileName").toString(),
                             summation,
                             history.getById(request.getSession().getAttribute("fileName").toString()).getAverage()
-                    ));
-//                sendSummationToDatabase(summation, request.getSession().getAttribute("fileName").toString());
-                }
-                catch (IllegalArgumentException e){
-                    history.save(new History(
+                    );
+                } else {
+                    data = new History(
                             request.getSession().getAttribute("fileName").toString(),
                             summation,
                             null
-                    ));
+                    );
                 }
+                history.save(data);
+                request.setAttribute("value", summation);
                 request.getRequestDispatcher("/WEB-INF/views/result.jsp").forward(request, response);
             }
             case "Average" -> {
                 String average = getAverageOf(result, columnName);
-                try {
-                    history.save(new History(
+                History data;
+                if (history.existsById(fileName)) {
+                    data = new History(
                             request.getSession().getAttribute("fileName").toString(),
                             history.getById(request.getSession().getAttribute("fileName").toString()).getSummation(),
-                            null
-                    ));
-//                sendSummationToDatabase(summation, request.getSession().getAttribute("fileName").toString());
-                }
-                catch (IllegalArgumentException e){
-                    history.save(new History(
+                            average
+                    );
+                } else {
+                    data = new History(
                             request.getSession().getAttribute("fileName").toString(),
                             null,
                             average
-                    ));
+                    );
                 }
-                sendAverageToDatabase(average, request.getSession().getAttribute("fileName").toString());
+                history.save(data);
                 request.setAttribute("value", getAverageOf(result, columnName));
                 request.getRequestDispatcher("/WEB-INF/views/result.jsp").forward(request, response);
             }
@@ -78,8 +83,10 @@ public class DataUtility {
                 request.getSession().setAttribute("dataColumn", new ParsedDataUtilityImpl().getColumnData(result, columnName));
                 doGet(request, response);
             }
-            case "BackFromDataPage" -> request.getRequestDispatcher("/WEB-INF/views/uploadPage.jsp").forward(request, response);
-            case "BackFromResultPage" -> request.getRequestDispatcher("/WEB-INF/views/dataPage.jsp").forward(request, response);
+            case "BackFromDataPage" ->
+                    request.getRequestDispatcher("/WEB-INF/views/uploadPage.jsp").forward(request, response);
+            case "BackFromResultPage" ->
+                    request.getRequestDispatcher("/WEB-INF/views/dataPage.jsp").forward(request, response);
         }
     }
 
@@ -118,41 +125,5 @@ public class DataUtility {
             return "Error in the Data, try to choose other column";
         }
         return summation.toString();
-    }
-
-    private void sendSummationToDatabase(String sum, String fileName) {
-        try {
-            Connection connection = new DatabaseConnection("mydb").setConnection();
-            String sql;
-            PreparedStatement preparedStatement;
-            sql = "UPDATE history_table SET summation = ? where file_name = ?";
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, sum);
-            preparedStatement.setString(2, fileName);
-            preparedStatement.executeUpdate();
-            connection.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private void sendAverageToDatabase(String average, String fileName) {
-        try {
-            Connection connection = new DatabaseConnection("mydb").setConnection();
-            String sql;
-            PreparedStatement preparedStatement;
-            sql = "UPDATE history_table SET average = ? where file_name = ?";
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, average);
-            preparedStatement.setString(2, fileName);
-            preparedStatement.executeUpdate();
-            connection.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
     }
 }

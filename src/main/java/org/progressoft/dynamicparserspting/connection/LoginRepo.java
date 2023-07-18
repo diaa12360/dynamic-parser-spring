@@ -5,6 +5,6 @@ import org.springframework.data.repository.RepositoryDefinition;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@RepositoryDefinition(domainClass = History.class, idClass = String.class)
-public interface HistoryRepo extends JpaRepository<History, String> {}
-
+@RepositoryDefinition(domainClass = User.class, idClass = String.class)
+public interface LoginRepo extends JpaRepository<User, String> {
+}

@@ -11,20 +11,20 @@ public class History {
     @Id
     @Column(
             name="file_name",
-            updatable = false,
+            updatable = true,
             columnDefinition = "TEXT"
     )
     private String fileName;
     @Column(
             name="summation",
-            updatable = false,
+            updatable = true,
             columnDefinition = "TEXT"
 
     )
     private String summation;
     @Column(
             name="average",
-            updatable = false,
+            updatable = true,
             columnDefinition = "TEXT"
     )
     private String average;
@@ -35,15 +35,5 @@ public class History {
         this.average = average;
     }
 
-    public History() {
-
-    }
-
-    public String getSummation() {
-        return summation;
-    }
-
-    public String getAverage() {
-        return average;
-    }
+    public History() {}
 }

@@ -4,23 +4,20 @@ package org.progressoft.dynamicparserspting.control;
 import com.progressoft.interns.advanced.parser.CSVParser;
 import com.progressoft.interns.advanced.parser.JSONParser;
 import com.progressoft.interns.advanced.parser.Parser;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
-import org.progressoft.dynamicparserspting.connection.DatabaseConnection;
+
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,10 +26,11 @@ import static java.rmi.server.LogStream.log;
 
 
 @Controller
-public class UploadFilePage{
+public class UploadFilePage {
     private static final long serialVersionUID = 1L;
 
     private static final String UPLOAD_DIR = "uploads";
+
 
     @PostMapping("/data")
     protected void post(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -76,32 +74,6 @@ public class UploadFilePage{
         req.getSession().setAttribute("columnsName", columnNames);
         req.getSession().setAttribute("result", result);
         req.getSession().setAttribute("fileName", fileName);
-        try {
-            DatabaseConnection cc = new DatabaseConnection("mydb");
-            Connection connection = cc.setConnection();
-            String sql = "create table history_table(" +
-                    "file_name varchar(255) not NULL," +
-                    "summation varchar(255)," +
-                    "average varchar(255)," +
-                    "PRIMARY KEY (file_name))";
-            PreparedStatement preparedStatement;
-            if (!DatabaseConnection.tableExists(connection, "history_table")) {
-                preparedStatement = connection.prepareStatement(sql);
-                preparedStatement.executeUpdate();
-            }
-            if(!DatabaseConnection.hasRecord(connection, "'"+ fileName +"'", "history_table", "file_name")) {
-                sql = "insert into history_table(file_name) values (?)";
-                preparedStatement = connection.prepareStatement(sql);
-                    preparedStatement.setString(1, fileName);
-                preparedStatement.executeUpdate();
-            }
-            connection.close();
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
         get(req, resp);
         try {
             Files.delete(Paths.get(file.getAbsolutePath()));

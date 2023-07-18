@@ -14,15 +14,15 @@ public class DynamicParserSptingApplication {
     public static void main(String[] args) {
         SpringApplication.run(DynamicParserSptingApplication.class, args);
     }
-    @Bean
-    CommandLineRunner commandLineRunner(HistoryRepo history){
-        return args -> {
-            history.save(
-                    new History("deyafilec.csv",
-                            "1592",
-                            "1592"
-                    )
-            );
-        };
-    }
+//    @Bean
+//    CommandLineRunner commandLineRunner(HistoryRepo history){
+//        return args -> {
+//            history.save(
+//                    new History("deyafilec.csv",
+//                            "1592",
+//                            "1592"
+//                    )
+//            );
+//        };
+//    }
 }
