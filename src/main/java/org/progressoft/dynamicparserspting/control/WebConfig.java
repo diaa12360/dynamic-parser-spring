@@ -25,14 +25,4 @@ public class WebConfig {
         resolver.setViewClass(JstlView.class);
         return resolver;
     }
-
-//    @Bean
-//    public DataSource dataSource() {
-//        DriverManagerDataSource dataSource = new DriverManagerDataSource();
-//        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-//        dataSource.setUsername("root");
-//        dataSource.setPassword("Deya@12@");
-//        dataSource.setUrl("jdbc:mysql://localhost:3306/mydb");
-//        return dataSource;
-//    }
 }
