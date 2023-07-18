@@ -10,7 +10,6 @@ import org.springframework.web.servlet.view.JstlView;
 @Configuration
 @EnableWebMvc
 public class WebConfig {
-
     @Bean
     public ViewResolver viewResolver() {
         InternalResourceViewResolver resolver = new InternalResourceViewResolver();

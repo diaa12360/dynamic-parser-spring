@@ -8,7 +8,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.progressoft.dynamicparserspting.connection.DatabaseConnection;
 import org.progressoft.dynamicparserspting.connection.History;
 import org.progressoft.dynamicparserspting.connection.HistoryRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +15,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,7 +22,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/utility")
 public class DataUtility {
-    private final int PAGE_SIZE = 15;
     @Autowired
     HistoryRepo history;
 
@@ -95,6 +90,7 @@ public class DataUtility {
         if (request.getParameter("pageNumber") != null)
             index = Integer.parseInt(request.getParameter("pageNumber"));
         ArrayList<String> columnData = (ArrayList<String>) request.getSession().getAttribute("dataColumn");
+        int PAGE_SIZE = 15;
         int startIndex = (index - 1) * PAGE_SIZE;
         int endIndex = Math.min(startIndex + PAGE_SIZE - 1, columnData.size() - 1);
         System.out.println(startIndex + " " + endIndex + " " + index);

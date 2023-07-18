@@ -22,13 +22,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import static java.rmi.server.LogStream.log;
 
 
 @Controller
 public class UploadFilePage {
-    private static final long serialVersionUID = 1L;
-
     private static final String UPLOAD_DIR = "uploads";
 
 
@@ -40,7 +37,7 @@ public class UploadFilePage {
     }
 
 
-    private ArrayList<HashMap<String, String>> parseFile(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    private void parseFile(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String applicationPath = req.getServletContext().getRealPath("");
         String uploadFilePath = applicationPath + UPLOAD_DIR + File.separator;
         File fileSaveDir = new File(uploadFilePath);
@@ -49,7 +46,6 @@ public class UploadFilePage {
         }
         String fileName = null;
         for (Part part : req.getParts()) {
-            //(ArrayList<Part>) req.getParts()
             fileName = getFileName(part);
             part.write(uploadFilePath + File.separator + fileName);
             break;
@@ -66,7 +62,6 @@ public class UploadFilePage {
             parser = new JSONParser();
         else
             parser = new CSVParser();
-        RequestDispatcher rq = req.getRequestDispatcher("dataPage.jsp");
         ArrayList<HashMap<String, String>> result = parser.parse(file.getAbsolutePath());
         ArrayList<String> columnNames = new ArrayList<>(result.get(0).keySet());
         int totalPages = (int) Math.ceil((double) result.size() / 15);
@@ -77,10 +72,8 @@ public class UploadFilePage {
         get(req, resp);
         try {
             Files.delete(Paths.get(file.getAbsolutePath()));
-        } catch (IOException e) {
-            log("File Not Found");
+        } catch (IOException ignore) {
         }
-        return result;
     }
 
     @GetMapping("/data")
