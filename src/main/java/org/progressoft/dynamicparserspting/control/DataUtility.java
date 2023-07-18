@@ -7,6 +7,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.progressoft.dynamicparserspting.connection.DatabaseConnection;
+import org.progressoft.dynamicparserspting.connection.History;
+import org.progressoft.dynamicparserspting.connection.HistoryRepo;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +26,7 @@ import java.util.List;
 public class DataUtility {
     private final int PAGE_SIZE = 15;
     @PostMapping
-    protected void post(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+    protected void post(HttpServletRequest request, HttpServletResponse response, HistoryRepo history) throws IOException, ServletException {
         ArrayList<HashMap<String, String>> result = (ArrayList<HashMap<String, String>>) request.getSession().getAttribute("result");
         response.setContentType("text/html");
         String buttonValue = request.getParameter("button");
@@ -33,11 +35,40 @@ public class DataUtility {
             case "Summation" -> {
                 String summation = getSumOf(result, columnName);
                 request.setAttribute("value", summation);
-                sendSummationToDatabase(summation, request.getSession().getAttribute("fileName").toString());
+                try {
+                    history.save(new History(
+                            request.getSession().getAttribute("fileName").toString(),
+                            summation,
+                            history.getById(request.getSession().getAttribute("fileName").toString()).getAverage()
+                    ));
+//                sendSummationToDatabase(summation, request.getSession().getAttribute("fileName").toString());
+                }
+                catch (IllegalArgumentException e){
+                    history.save(new History(
+                            request.getSession().getAttribute("fileName").toString(),
+                            summation,
+                            null
+                    ));
+                }
                 request.getRequestDispatcher("/WEB-INF/views/result.jsp").forward(request, response);
             }
             case "Average" -> {
                 String average = getAverageOf(result, columnName);
+                try {
+                    history.save(new History(
+                            request.getSession().getAttribute("fileName").toString(),
+                            history.getById(request.getSession().getAttribute("fileName").toString()).getSummation(),
+                            null
+                    ));
+//                sendSummationToDatabase(summation, request.getSession().getAttribute("fileName").toString());
+                }
+                catch (IllegalArgumentException e){
+                    history.save(new History(
+                            request.getSession().getAttribute("fileName").toString(),
+                            null,
+                            average
+                    ));
+                }
                 sendAverageToDatabase(average, request.getSession().getAttribute("fileName").toString());
                 request.setAttribute("value", getAverageOf(result, columnName));
                 request.getRequestDispatcher("/WEB-INF/views/result.jsp").forward(request, response);
